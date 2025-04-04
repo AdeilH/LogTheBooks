@@ -105,16 +105,21 @@ export default function HomePage() {
               />
             </div>
 
+            <div className="flex items-center justify-between">
+                {/* Placeholder for remember me if needed */}
+                <div className="flex items-center">
+                </div>
+
+                <div className="text-sm">
+                <Link href="/auth/reset-password" className="font-medium text-indigo-600 hover:text-indigo-500">
+                    Forgot your password?
+                </Link>
+                </div>
+            </div>
+
             {error && (
               <p className="text-sm text-red-600 text-center">{error}</p>
             )}
-
-            {/* Add password reset link here if desired */}
-            {/* <div className="text-sm text-right">
-              <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-                Forgot your password?
-              </a>
-            </div> */}
 
             <div>
               <button
