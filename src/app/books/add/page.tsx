@@ -42,7 +42,7 @@ export default function AddBookPage() {
       // console.log('Added book:', data);
       // Optionally redirect to the book details page or the user's library
       // router.push(`/books/${data[0].id}`);
-      router.push('/'); // Redirect home for now
+      router.push('/v2/dashboard'); // Redirect home for now
 
     } catch (err: any) {
       console.error('Error adding book:', err);
