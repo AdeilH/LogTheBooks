@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
 
-// Renamed function to HomePage (or could keep SignInPage)
-export default function HomePage() { 
+export default function SignInPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,9 +27,10 @@ export default function HomePage() {
         throw signInError;
       }
 
-      // Sign-in successful, redirect to the dashboard
-      router.push('/v2/dashboard');
-      router.refresh();
+      // Sign-in successful, redirect
+      // Supabase client handles session persistence automatically
+      router.push('/'); // Redirect to home page or dashboard
+      router.refresh(); // Refresh server components to reflect login state
 
     } catch (err: any) {
       console.error('Sign in error:', err);
