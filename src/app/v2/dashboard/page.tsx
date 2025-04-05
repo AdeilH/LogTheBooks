@@ -141,7 +141,6 @@ export default function DashboardPageV2() { // Renamed component
       }
       setUser(currentUser);
       setLoading(false);
-      await fetchLogs(currentUser.id); // Fetch logs after user is confirmed
 
       // Also fetch all user tags for filtering options
       const { data: allTagsData, error: tagsError } = await supabase
@@ -312,7 +311,6 @@ export default function DashboardPageV2() { // Renamed component
       setError("Failed to sign out.");
       setLoggingOut(false);
     } else {
-      setUser(null);
       router.push('/');
     }
   };

@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
+import { User } from '@supabase/supabase-js';
 
 export default function AddBookPage() {
   const router = useRouter();
@@ -12,9 +13,22 @@ export default function AddBookPage() {
   const [coverImageUrl, setCoverImageUrl] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
 
-  // TODO: Add logic to check if user is authenticated before rendering/allowing submission
-  // This might involve checking the session state or using middleware
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user: currentUser }, error: userError } = await supabase.auth.getUser();
+      if (userError || !currentUser) {
+        console.log('AddBookPage: No user found, redirecting to login.');
+        router.push('/');
+      } else {
+        setUser(currentUser);
+        setPageLoading(false);
+      }
+    };
+    checkUser();
+  }, [router]);
 
   const handleAddBook = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -27,34 +41,38 @@ export default function AddBookPage() {
         .insert([
           {
             title,
-            author: author || null, // Handle optional field
-            isbn: isbn || null,     // Handle optional field
-            cover_image_url: coverImageUrl || null, // Handle optional field
+            author: author || null,
+            isbn: isbn || null,
+            cover_image_url: coverImageUrl || null,
           },
         ])
-        .select(); // Optionally select the inserted data
+        .select();
 
       if (insertError) {
         throw insertError;
       }
 
       alert('Book added successfully!');
-      // console.log('Added book:', data);
-      // Optionally redirect to the book details page or the user's library
-      // router.push(`/books/${data[0].id}`);
-      router.push('/v2/dashboard'); // Redirect home for now
+      router.push('/v2/dashboard');
 
     } catch (err: any) {
       console.error('Error adding book:', err);
       setError(err.message || 'An unexpected error occurred while adding the book.');
-      // Handle specific errors like unique constraint violation if needed
-      if (err.code === '23505') { // Unique violation (e.g., duplicate ISBN if unique constraint added)
+      if (err.code === '23505') {
         setError('A book with this identifier might already exist.');
       }
     } finally {
       setLoading(false);
     }
   };
+
+  if (pageLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
